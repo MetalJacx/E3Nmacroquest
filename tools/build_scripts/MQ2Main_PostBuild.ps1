@@ -2,9 +2,8 @@ $location = Get-Location
 
 function Copy-Latestfile {
 	Param($File1, $File2, $Relative)
-	#Write-Host "Copy $File1 to $File2 ..."
 
-	if (![System.IO.File]::Exists($File1)) {
+	if (![System.IO.File]::Exists($File1) -And -not (Test-Path -Path "$File1")) {
 		return
 	}
 	$File1Date = Get-Item $File1 | ForEach-Object{ $_.LastWriteTimeUtc }
@@ -18,6 +17,12 @@ function Copy-Latestfile {
 		New-Item -ItemType Directory -Path $dir | Out-Null
 	}
 
+	$isDirectory = Test-Path -Path "$File1" -PathType Container
+	if ($isDirectory) {
+		Copy-Item -Path "$File1" -Dest "$File2" -Force -Recurse
+		Write-Host "Copying directory $File1"
+		return
+	}
 	if (![System.IO.File]::Exists($File2)) {
 		try {
 			New-Item -ItemType HardLink -Path $File2 -Value $File1 | Out-Null

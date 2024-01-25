@@ -1,3 +1,11 @@
-config/MacroQuest_default.ini
+config/*.ini
+config/*.cfg
+config/*.yaml
+config/e3 Bot Inis
+config/e3 Macro Inis
 macros/*.mac
+mono/*
 resources/*
+Utilities/*
+eqbcs.exe
+mono-2.0-sgen.dll
