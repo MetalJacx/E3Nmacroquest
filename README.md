@@ -15,7 +15,44 @@ MacroQuest is an open source scripting and plugin platform for EverQuest.  Docum
 
 The recommended way to build MacroQuest is from a source code checkout using Git. There are many how to guides for installing and setting up git. [Here is one of them](https://docs.gitlab.com/ee/gitlab-basics/start-using-git.html)
 
-### Check out the latest source code
+### Building MQ with MQ2Mono for E3Next
+
+These build instructions should output similar content to the E3Next download from Rekkas git repository https://github.com/RekkasGit/E3NextAndMQNextBinary  
+
+Do these steps once to setup the repository locally and initialize all of the plugin submodules:  
+
+1. Clone the repository, checkout the e3n branch and initialize the submodules
+```
+git clone https://github.com/aquietone/macroquest -b e3n
+cd macroquest
+git submodule update --init --recursive
+```
+2. Open `src/MacroQuest.sln` in Visual Studio.  
+3. Switch build type and architecture to `release` / `Win32`  
+
+Build the solution:  
+1. Right click core -> build (will take a while the first time, pulling vcpkg stuff)  
+2. Right click solution -> build  
+
+Find the build output in `macroquest/build/bin/release folder`.
+
+To update from base mq:  
+Do this once:  
+```
+git remote add parent https://github.com/macroquest/macroquest
+git fetch parent
+git checkout --track parent/emu
+```
+
+Do this each time when updating from upstream MQ:
+```
+git checkout emu
+git pull && git submodule update
+git checkout e3n
+git rebase emu
+```
+
+### Building MQ
 
 Create the checkout. This will create the subfolder **macroquest** that contains a copy of the project.
 
