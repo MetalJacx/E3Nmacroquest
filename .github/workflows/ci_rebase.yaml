@@ -1,0 +1,18 @@
+name: CI Rebase
+
+on:
+  schedule:
+  - cron: "0 0 * * *"  # run once a week
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Rebase from macroquest/master
+      uses: imba-tjd/rebase-upstream-action@master
+      with:
+        upstream: macroquest/macroquest
+        branch:   master

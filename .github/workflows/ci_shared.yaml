@@ -6,17 +6,22 @@ on:
       client_target:
         required: true
         type: string
+      tag_name:
+        required: false
+        type: string
 
 env:
   platform: "${{ inputs.client_target == 'emu' && 'Win32' || 'x64' }}"
 
 jobs:
   build:
-    if: github.repository == 'macroquest/macroquest'
+    if: github.repository == 'aquietone/macroquest'
     runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MQ_PAT }}
 
       - name: Checkout submodules excluding eqlib
         run: git -c submodule."src/eqlib".update=none submodule update --init --recursive --depth=1
@@ -49,3 +54,12 @@ jobs:
 
       - name: Build ${{ env.platform }} Release
         run: msbuild src/MacroQuest.sln /NoLogo /Verbosity:minimal /p:Configuration=Release /p:Platform=${{ env.platform }}
+      - run: Compress-Archive -Path build/bin/release/* -Destination release.zip
+        if: inputs.tag_name == 'rel-e3n'
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        if: inputs.tag_name == 'rel-e3n'
+        with:
+          name: release-zip
+          path: release.zip
+          retention-days: 1
